@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
         with:
-          repository: xuanli199/xuanli199.github.io
+          repository: hrz-gh/os.github.io
       - name: Set up Node
         uses: actions/setup-node@v2
         with:
