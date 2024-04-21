@@ -23,30 +23,27 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      - name: Set up dep
+      - name: Build
         run: |
           git config --global core.quotepath false
           git ls-files | while read file; do touch -d $(git log -1 --format="@%ct" "$file") "$file"; done
           python3 generate.py
           npm install
-      - name: Build gh
-        run: |
           npm run build
+      - name: Commit files
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Action[Bot]"
+          git add -A
+          git commit -m "update built files after user commit"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Deploy gh
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: ./docs
-          force_orphan: true
-      - name: Build ge
-        run: |
-          ./config.sh ge
-          npm run build
-      - name: Deploy ge
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: ge-pages
           publish_dir: ./docs
           force_orphan: true
