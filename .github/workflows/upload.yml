@@ -3,7 +3,7 @@ name: AutoUpdate
 on:
   push:
     branches:
-      - 'main'
+      - 'master'
 
   workflow_dispatch:
 
@@ -14,7 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
         with:
-          repository: hrz-gh/desktop
+          repository: hrz-gh/hrz-gh.github.io
       - name: Set up Node
         uses: actions/setup-node@v2
         with:
