@@ -27,10 +27,10 @@ jobs:
         run: |
           git config --global core.quotepath false
           git ls-files | while read file; do touch -d $(git log -1 --format="@%ct" "$file") "$file"; done
+          python3 generate.py
           npm install
       - name: Build gh
         run: |
-          ./config.sh gh
           npm run build
       - name: Deploy gh
         uses: peaceiris/actions-gh-pages@v4
