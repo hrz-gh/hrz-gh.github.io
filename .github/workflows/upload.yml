@@ -1,0 +1,52 @@
+name: AutoUpdate
+
+on:
+  push:
+    branches:
+      - 'main'
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+        with:
+          repository: hrz-gh/desktop
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Set up dep
+        run: |
+          git config --global core.quotepath false
+          git ls-files | while read file; do touch -d $(git log -1 --format="@%ct" "$file") "$file"; done
+          npm install
+      - name: Build gh
+        run: |
+          ./config.sh gh
+          npm run build
+      - name: Deploy gh
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./docs
+          force_orphan: true
+      - name: Build ge
+        run: |
+          ./config.sh ge
+          npm run build
+      - name: Deploy ge
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: ge-pages
+          publish_dir: ./docs
+          force_orphan: true
